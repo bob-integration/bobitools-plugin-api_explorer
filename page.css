@@ -1,0 +1,25 @@
+/* Explorateur d'API — styles (tokens de base.css). */
+.api-app { display: grid; grid-template-columns: 220px 1fr; gap: 14px; min-height: 440px; }
+.api-side { border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 10px; }
+.api-hist { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 2px; }
+.api-hist li.h { padding: 6px 8px; border-radius: var(--radius-small); cursor: pointer; font-size: 0.82em;
+    font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.api-hist li.h:hover { background: var(--bg-hover); }
+.api-main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.api-req { display: flex; gap: 8px; }
+.api-req select, .api-req input { background: var(--bg-input); border: 1px solid var(--border); color: var(--text);
+    padding: 8px 10px; border-radius: var(--radius-small); font: inherit; }
+.api-req input { flex: 1; font-family: var(--font-mono); }
+.api-grid { display: grid; grid-template-columns: 90px 1fr; gap: 8px 12px; align-items: start; }
+.api-grid label { color: var(--text-muted); font-size: 0.85em; padding-top: 8px; }
+.api-grid textarea { width: 100%; min-height: 70px; resize: vertical; background: var(--bg-input);
+    border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: var(--radius-small);
+    font-family: var(--font-mono); font-size: 0.86em; }
+.api-resp { border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 12px; min-height: 120px; }
+.api-status { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; font-family: var(--font-mono); }
+.api-status .code { font-weight: 700; padding: 2px 8px; border-radius: 3px; }
+.api-status .code.ok { background: var(--status-running-bg); color: var(--status-running-fg); }
+.api-status .code.ko { background: var(--status-stopped-bg); color: var(--status-stopped-fg); }
+.api-status .ms { color: var(--text-muted); font-size: 0.85em; }
+.api-resp pre { background: var(--bg-soft); padding: 10px; border-radius: var(--radius-small);
+    overflow: auto; max-height: 320px; font-size: 0.84em; line-height: 1.45; }

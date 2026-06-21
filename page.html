@@ -1,0 +1,24 @@
+<!-- Explorateur d'API — fragment monté par window.BTTools.api_explorer.mount(el, ctx). -->
+<div class="api-app">
+  <aside class="api-side">
+    <strong>Historique</strong>
+    <ul class="api-hist" id="api-hist"><li class="meta">—</li></ul>
+  </aside>
+  <section class="api-main">
+    <div class="api-req">
+      <select id="api-method">
+        <option>GET</option><option>POST</option><option>PUT</option>
+        <option>DELETE</option><option>PATCH</option><option>HEAD</option>
+      </select>
+      <input type="text" id="api-url" placeholder="https://api.exemple.fr/v1/ping" spellcheck="false">
+      <button class="btn btn-blue" id="api-send" type="button">Envoyer</button>
+    </div>
+    <div class="api-grid">
+      <label>En-têtes (JSON)</label>
+      <textarea id="api-headers" spellcheck="false" placeholder='{ "Authorization": "Bearer …" }'></textarea>
+      <label>Corps</label>
+      <textarea id="api-body" spellcheck="false" placeholder="(corps de la requête)"></textarea>
+    </div>
+    <div class="api-resp" id="api-resp"><div class="meta">La réponse s'affichera ici.</div></div>
+  </section>
+</div>
