@@ -21,11 +21,42 @@ Contrat d'un backend Bobi.Tools (runtime=inprocess) :
 
 La requête HTTP part **du serveur** : ni CORS, ni exposition de secrets au navigateur.
 """
+import ipaddress
+import socket
 import time
+from urllib.parse import urlparse
+
 import requests
 
 _ALLOWED = {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}
 _MAX_BODY = 200_000   # tronque les réponses énormes pour ne pas gonfler l'UI
+
+
+def _is_blocked_ip(ip):
+    """Bloque les cibles dangereuses d'une SSRF : boucle locale (l'app + les ports
+    dynamiques des conteneurs Docker), link-local / métadonnées cloud (169.254.169.254),
+    et l'adresse « non spécifiée ». Le RFC1918 reste autorisé : explorer les équipements
+    du LAN est la vocation de l'outil."""
+    try:
+        addr = ipaddress.ip_address(ip)
+    except ValueError:
+        return True   # non résoluble en IP → on refuse par prudence
+    return (addr.is_loopback or addr.is_link_local
+            or addr.is_multicast or addr.is_unspecified or addr.is_reserved)
+
+
+def _resolve_is_safe(host):
+    """Résout `host` et refuse si UNE des adresses tombe dans une plage bloquée
+    (protège aussi du DNS-rebinding vers loopback/link-local)."""
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror:
+        return False, "hôte non résoluble"
+    for info in infos:
+        ip = info[4][0]
+        if _is_blocked_ip(ip):
+            return False, f"cible interdite ({ip})"
+    return True, None
 
 
 def api(path, method, payload, ctx):
@@ -38,6 +69,12 @@ def _do_request(payload, ctx):
     url = (payload.get("url") or "").strip()
     if not url.startswith(("http://", "https://")):
         return 400, {"error": "URL http(s) requise"}
+    host = (urlparse(url).hostname or "").strip()
+    if not host:
+        return 400, {"error": "URL sans hôte"}
+    ok, why = _resolve_is_safe(host)
+    if not ok:
+        return 400, {"error": f"URL refusée : {why}"}
     verb = (payload.get("method") or "GET").upper()
     if verb not in _ALLOWED:
         return 400, {"error": f"méthode non autorisée : {verb}"}
@@ -47,9 +84,11 @@ def _do_request(payload, ctx):
     ctx["audit"](verb, url)   # qui a tapé quelle URL → journal d'audit
     t0 = time.time()
     try:
+        # allow_redirects=False : un 3xx vers une cible interne contournerait la garde
+        # SSRF (la redirection n'est pas re-validée). Le 3xx + Location est renvoyé tel quel.
         r = requests.request(verb, url, headers=headers,
                              data=body if isinstance(body, str) and body else None,
-                             timeout=20, allow_redirects=True)
+                             timeout=20, allow_redirects=False)
     except requests.RequestException as e:
         return 502, {"error": str(e)}
     elapsed = int((time.time() - t0) * 1000)
