@@ -2,14 +2,23 @@
   "license": "GPL-3.0-or-later",
   "type": "api_explorer",
   "label": "Explorateur d'API",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "runtime": "inprocess",
   "description": "Tester des requêtes HTTP (méthode, URL, en-têtes, corps) avec historique. La requête part du serveur (pas de CORS, possibilité de porter des secrets). Démontre un outil in-process avec backend.py.",
-  "badge": { "label": "API", "class": "tool-api", "oklch": "0.80 0.12 150" },
-  "nav": { "section": "outils", "label": "Outils", "order": 20 },
+  "badge": {
+    "label": "API",
+    "class": "tool-api",
+    "oklch": "0.80 0.12 150"
+  },
+  "nav": {
+    "section": "outils",
+    "label": "Outils",
+    "order": 20
+  },
   "ui": {
     "page_html": "page.html",
     "page_js": "page.js",
     "page_css": "page.css"
-  }
+  },
+  "store_api": true
 }
