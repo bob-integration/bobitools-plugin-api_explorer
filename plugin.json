@@ -19,6 +19,5 @@
     "page_html": "page.html",
     "page_js": "page.js",
     "page_css": "page.css"
-  },
-  "store_api": true
+  }
 }
